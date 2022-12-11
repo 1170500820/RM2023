@@ -67,7 +67,21 @@ def train_val_split(train_rate = 0.8):
         f.write(json.dumps(e, ensure_ascii=False) + '\n')
     f.close()
 
+def convert_to_json():
+    ftrain = 'data/processed/train.txt'
+    fvalid = 'data/processed/valid.txt'
+
+    dtrain = list(open(ftrain, 'r', encoding='utf-8').read().strip().split('\n'))
+    train = list({'text': x[0], 'label': x[1]} for x in list(v.split('\t') for v in dtrain))
+
+    dvalid = list(open(fvalid, 'r', encoding='utf-8').read().strip().split('\n'))
+    valid = list({'text': x[0], 'label': x[1]} for x in list(v.split('\t') for v in dvalid))
+
+    json.dump(dtrain, open('data/processed/proc_train.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(dvalid, open('data/processed/proc_valid.json', 'w', encoding='utf-8'), ensure_ascii=False)
+
 
 if __name__ == '__main__':
     # convert_to_jsonl()
-    train_val_split()
+    # train_val_split()
+    convert_to_json()
