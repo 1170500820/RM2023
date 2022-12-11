@@ -91,11 +91,11 @@ class MutilLabelClassification(nn.Module):
         no_decay= ['bias', 'LayerNorm.weight']
         optimizer = AdamW([
             {
-                'params': [p for n, p in self.parameters() if not any(nd in n for nd in no_decay)],
+                'params': [p for n, p in self.named_parameters() if not any(nd in n for nd in no_decay)],
                 'lr': self.hparams['lr'],
                 'weight_decay': self.hparams['weight_decay']
             }, {
-                'params': [p for n, p in self.parameters() if any(nd in n for nd in no_decay)],
+                'params': [p for n, p in self.named_parameters() if any(nd in n for nd in no_decay)],
                 'lr': self.hparams['lr'],
                 'weight_decay': 0.0
             }
@@ -156,7 +156,7 @@ class BertMLC_FineTuner(pl.LightningModule):
             token_type_ids=inp['token_type_ids'],
             attention_mask=inp['attention_mask']
         )  # (bsz, num_labels)
-        target = tgt['target']  # (bsz, num_labels)
+        target = tgt['label']  # (bsz, num_labels)
         loss = multilabel_crossentropy(output, target)
         self.log('loss', float(loss))
         return loss
@@ -237,7 +237,9 @@ class BertMLC_FineTuner(pl.LightningModule):
         return tqdm_dict
 
     def configure_optimizers(self):
-        return [self.model.get_optimizers()]
+        optimizer = self.model.get_optimizers()
+        self.opt = optimizer
+        return [optimizer]
 
     def optimizer_step(self,
                        epoch=None, batch_idx=None, optimizer=None, optimizer_idx=None,
