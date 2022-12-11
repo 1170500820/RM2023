@@ -35,7 +35,7 @@ def handle_cli():
     parser.add_argument('--model', type=str, default='bert', help='使用的模型')
     parser.add_argument('--bsz', type=int, default=32, help='单卡的batch size。实际的batch size为bsz * n_gpus * grad_acc')
     parser.add_argument('--n_gpus', type=int, default=1, help='用于训练的显卡数量')
-    parser.add_argument('--epoch', type=int, default=5, help='训练的epoch数')
+    parser.add_argument('--epoch', type=int, default=15, help='训练的epoch数')
     parser.add_argument('--name', type=str, default='RM_default', help='用于标识该次训练的名字，将用于对checkpoint进行命名。')
     parser.add_argument('--grad_acc', type=int, default=2, help='梯度累积操作，可用于倍增batch size')
     parser.add_argument('--lr', type=float, default=1e-5, help='模型使用的学习率')
@@ -120,7 +120,7 @@ def train(config):
     model_params = dict(
         weight_decay=train_conf['weight_decay'],
         model_name=config['model_name'],
-        learning_rate=config['lr'],
+        lr=config['lr'],
         adam_epsilon=train_conf['adam_epsilon'],
         max_seq_length=plm_model_conf['max_seq_length'],
         warmup_steps=train_conf['warmup_steps'],
@@ -129,7 +129,9 @@ def train(config):
         accumulate_grad_batches=config['grad_acc'],
         num_train_epochs=config['epoch'],
         eval_batch_size=config['bsz'],
-        overfit=config['overfit']
+        overfit=config['overfit'],
+
+        num_labels=len(RM_labels)
     )
 
     ru_logger.info(f'正在加载模型{config["model_name"]}')

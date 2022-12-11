@@ -1,4 +1,4 @@
-from EDOS.type_def import *
+from type_def import *
 import json
 
 """

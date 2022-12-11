@@ -12,9 +12,9 @@ class RM_Dataset(Dataset):
         if data_type == 'dev' or data_type == 'val':
             data_type = 'valid'
         if data_type == 'train':
-            fname = '../data/processed/proc_train.json'
+            fname = 'data/processed/proc_train.json'
         elif data_type == 'valid':
-            fname = '../data/processed/proc_valid.json'
+            fname = 'data/processed/proc_valid.json'
         else:
             raise Exception(f'[RM_Dataset]未知的数据类型：{data_type}！')
 

@@ -3,7 +3,7 @@ temp_utils.py 编写了一些方便数据处理的函数。
 使用paddlepaddle
 """
 import numpy as np
-from EDOS.type_def import *
+from type_def import *
 import random
 from loguru import logger
 import torch
