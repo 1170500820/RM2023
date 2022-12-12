@@ -68,8 +68,8 @@ def train_val_split(train_rate = 0.8):
     f.close()
 
 def convert_to_json():
-    ftrain = 'data/processed/train.txt'
-    fvalid = 'data/processed/valid.txt'
+    ftrain = 'data/filtered/processed/train.txt'
+    fvalid = 'data/filtered/processed/valid.txt'
 
     dtrain = list(open(ftrain, 'r', encoding='utf-8').read().strip().split('\n'))
     train = list({'text': x[0], 'label': x[1].split(',')} for x in list(v.split('\t') for v in dtrain))
@@ -77,11 +77,30 @@ def convert_to_json():
     dvalid = list(open(fvalid, 'r', encoding='utf-8').read().strip().split('\n'))
     valid = list({'text': x[0], 'label': x[1].split(',')} for x in list(v.split('\t') for v in dvalid))
 
-    json.dump(train, open('data/processed/proc_train.json', 'w', encoding='utf-8'), ensure_ascii=False)
-    json.dump(valid, open('data/processed/proc_valid.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(train, open('data/filtered/processed/proc_train.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(valid, open('data/filtered/processed/proc_valid.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
+
+def generate_label_vocab():
+    ftrain = 'data/filtered/processed/proc_train.json'
+    fvalid = 'data/filtered/processed/proc_valid.json'
+
+    dtrain = json.load(open(ftrain, 'r', encoding='utf-8'))
+    dvalid = json.load(open(fvalid, 'r', encoding='utf-8'))
+
+    label_set = set()
+    for ev in [dtrain, dvalid]:
+        for e in ev:
+            for l in e:
+                label_set.add(l)
+    label_list = sorted(list(label_set))
+    label_idx = {x: i for i, x in enumerate(label_list)}
+
+    json.dump(label_list, open('data/filtered/processed/label_list.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(label_idx, open('data/filtered/processed/label_idx.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
 if __name__ == '__main__':
     # convert_to_jsonl()
     # train_val_split()
-    convert_to_json()
+    # convert_to_json()
+    generate_label_vocab()
