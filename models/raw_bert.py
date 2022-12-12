@@ -217,19 +217,28 @@ class BertMLC_FineTuner(pl.LightningModule):
         }, prog_bar=True)
 
     def predict_step(self, batch, batch_idx, dataloader_idx: int = 0):
-        inp = batch
+        inp, tgt = batch
+        texts, labels = inp['texts'], inp['labels']
         output = self.model(
             input_ids=inp['input_ids'],
             token_type_ids=inp['token_type_ids'],
             attention_mask=inp['attention_mask']
         )
         preds = []
-        for e in output:
-            preds.append((torch.where(torch.sigmoid(e) > self.hparams['threshold']))[0].tolist())
+        for e, t, l in zip(output, texts, labels):
+            pred = (torch.where(torch.sigmoid(e) > self.hparams['threshold']))[0].tolist()
+            preds.append({
+                'pred': pred,
+                'text': t,
+                'label': l
+            })
         return preds
 
     def predict_dataloader(self):
-        pass
+        train_dataset = RM_Dataset('valid', self.tokenizer)
+        dataloader = DataLoader(train_dataset, batch_size=self.hparams['eval_batch_size'], shuffle=False,
+                                collate_fn=RM_collate_fn)
+        return dataloader
 
     def get_tqdm_dict(self):
         tqdm_dict = {"loss": "{:.3f}".format(self.trainer.avg_loss), "lr": self.lr_scheduler.get_last_lr()[-1]}

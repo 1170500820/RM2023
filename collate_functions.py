@@ -31,7 +31,9 @@ def RM_collate_fn(lst, padding=256):
     return {
         'input_ids': input_ids,
         'token_type_ids': token_type_ids,
-        'attention_mask': attention_mask
+        'attention_mask': attention_mask,
+        'texts': data_dict['text'],
+        'labels': data_dict['label']
     }, {
         'label': label
     }

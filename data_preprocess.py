@@ -91,7 +91,7 @@ def generate_label_vocab():
     label_set = set()
     for ev in [dtrain, dvalid]:
         for e in ev:
-            for l in e:
+            for l in e['label']:
                 label_set.add(l)
     label_list = sorted(list(label_set))
     label_idx = {x: i for i, x in enumerate(label_list)}
