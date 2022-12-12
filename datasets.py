@@ -2,19 +2,24 @@ import sys
 sys.path.append('..')
 
 import json
+import os
 
 import torch
 from torch.utils.data import Dataset
 
+
+data_path = 'data/filtered/processed'
 
 class RM_Dataset(Dataset):
     def __init__(self, data_type: str, tokenizer, overfit: bool = False):
         if data_type == 'dev' or data_type == 'val':
             data_type = 'valid'
         if data_type == 'train':
-            fname = 'data/processed/proc_train.json'
+            # fname = 'data/processed/proc_train.json'
+            fname = os.path.join(data_path, 'proc_train.json')
         elif data_type == 'valid':
-            fname = 'data/processed/proc_valid.json'
+            # fname = 'data/processed/proc_valid.json'
+            fname = os.path.join(data_path, 'proc_valid.json')
         else:
             raise Exception(f'[RM_Dataset]未知的数据类型：{data_type}！')
 
