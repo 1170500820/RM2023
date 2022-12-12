@@ -228,12 +228,12 @@ class BertMLC_FineTuner(pl.LightningModule):
         for e, t, l in zip(output, texts, labels):
             pred = (torch.where(torch.sigmoid(e) > self.hparams['threshold']))[0].tolist()
             real_labels = []
-            for el in l:
+            for el in pred:
                 real_labels.append(RM_labels[el])
             preds.append({
-                'pred': pred,
+                'pred': real_labels,
                 'text': t,
-                'label': real_labels
+                'label': l
             })
         return preds
 
