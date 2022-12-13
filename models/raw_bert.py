@@ -37,6 +37,8 @@ class MutilLabelClassification(nn.Module):
         self.hparams.update(hparams)
         self.max_len = self.hparams['max_len']
         self.bert = BertModel.from_pretrained(self.hparams['model_name'])
+        self.tokenizer = BertTokenizerFast.from_pretrained(self.hparams['model_name'])
+        self.bert.resize_token_embeddings(len(self.tokenizer))
         config = self.bert.config
         self.classifier = nn.Linear(config.hidden_size, self.hparams['num_labels'])
         self.init_weights()
