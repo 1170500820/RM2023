@@ -1,7 +1,7 @@
 import json
 
 
-data_path = 'data/filtered/processed/'
+data_path = 'data/filtered/processed_1021/'
 
 RM_labels = json.load(open(data_path + 'label_list.json', 'r', encoding='utf-8'))
 RM_labels_idx = json.load(open(data_path + 'label_idx.json', 'r', encoding='utf-8'))

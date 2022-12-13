@@ -11,7 +11,7 @@ import pandas as pd
 from transformers import BertTokenizerFast
 
 
-data_path = 'data/filtered/processed'
+data_path = 'data/filtered/processed_1021'
 
 class RM_Dataset(Dataset):
     def __init__(self, data_type: str, tokenizer, overfit: bool = False, q: float = 1):
