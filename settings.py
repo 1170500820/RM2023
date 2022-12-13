@@ -45,7 +45,7 @@ Model -- 模型参数，指定了Model、FineTuner的行为
 model_conf = dict()
 
 plm_model_conf = dict(
-    model_name='bert-base-chinese',
+    model_name='/mnt/huggingface_models/bert-base-chinese-rm',
     max_seq_length=256,
 )
 
