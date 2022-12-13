@@ -81,7 +81,7 @@ def get_callbacks(config):
         ModelCheckpoint(
             dirpath=config['ckp_dir'],
             save_top_k=config['save_top_k'],
-            filename=config['name'] + '.' + '{epoch}-{val_loss:.2f}',
+            filename=config['name'] + '.' + '{epoch}-{f1_score:.2f}',
             monitor='f1_score',
             mode='max'),
         RichProgressBar(
