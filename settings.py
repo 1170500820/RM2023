@@ -60,6 +60,6 @@ logger_conf = dict(
 
 ckp_conf = dict(
     save_top_k=-1,
-    monitor='val_loss',
+    monitor='f1_score',
     dirpath='RM-checkpoints/',
 )

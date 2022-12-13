@@ -162,7 +162,7 @@ class BertMLC_FineTuner(pl.LightningModule):
         return loss
 
     def train_dataloader(self):
-        train_dataset = RM_Dataset('train', self.tokenizer)
+        train_dataset = RM_Dataset('train', self.tokenizer, q=self.hparams['resample_q'])
         dataloader = DataLoader(train_dataset, batch_size=self.hparams['train_batch_size'], drop_last=True,
                                 shuffle=True, collate_fn=RM_collate_fn)
         t_total = (

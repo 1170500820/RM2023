@@ -52,6 +52,7 @@ def handle_cli():
     # model
     parser.add_argument('--model_name', type=str, default=plm_model_conf['model_name'])
     parser.add_argument('--max_length', type=int, default=plm_model_conf['max_seq_length'])
+    parser.add_argument('--q', type=float, default=1)
 
     # 在2个batch上进行过拟合实验
     parser.add_argument('--overfit', action='store_true', help='在2个batch上进行过拟合实验。验证代码正确性')
@@ -81,6 +82,7 @@ def get_callbacks(config):
             dirpath=config['ckp_dir'],
             save_top_k=config['save_top_k'],
             filename=config['name'] + '.' + '{epoch}-{val_loss:.2f}',
+            monitor='f1_score',
             mode='max'),
         RichProgressBar(
             theme=my_theme)
@@ -131,7 +133,8 @@ def train(config):
         eval_batch_size=config['bsz'],
         overfit=config['overfit'],
 
-        num_labels=len(RM_labels)
+        num_labels=len(RM_labels),
+        resample_q=config['q']
     )
 
     ru_logger.info(f'正在加载模型{config["model_name"]}')
