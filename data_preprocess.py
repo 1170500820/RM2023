@@ -84,7 +84,7 @@ def convert_to_json():
 
 
 def generate_label_vocab(valid=True):
-    fpath = 'data/filtered/processed_1021/part3/'
+    fpath = 'data/filtered/processed_1021/part1/'
     ftrain = os.path.join(fpath, 'proc_train.json')
     if valid: fvalid = os.path.join(fpath, 'proc_valid.json')
 
@@ -132,7 +132,7 @@ def generate_part():
             for e in it:
                 new_labels = []
                 for elem in e['label']:
-                    if elem not in part_labels: new_labels.append(elem)
+                    if elem in part_labels: new_labels.append(elem)
                 results.append({
                     'text': e['text'],
                     'label': new_labels
@@ -168,6 +168,6 @@ if __name__ == '__main__':
     # convert_to_jsonl()
     # train_val_split()
     # convert_to_json()
-    # generate_label_vocab(False)
-    generate_validation()
+    generate_label_vocab(False)
+    # generate_validation()
     # generate_part()
