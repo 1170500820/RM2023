@@ -1,6 +1,8 @@
 """
 先把数据转换成方便读取的模式
 """
+import random
+
 """
 将比赛提供的csv数据集转换为jsonl格式
 """
@@ -68,8 +70,8 @@ def train_val_split(train_rate = 0.8):
     f.close()
 
 def convert_to_json():
-    ftrain = 'data/filtered/processed/train.txt'
-    fvalid = 'data/filtered/processed/valid.txt'
+    ftrain = 'data/filtered/processed_1021/train.txt'
+    fvalid = 'data/filtered/processed_1021/valid.txt'
 
     dtrain = list(open(ftrain, 'r', encoding='utf-8').read().strip().split('\n'))
     train = list({'text': x[0], 'label': x[1].split(',')} for x in list(v.split('\t') for v in dtrain))
@@ -77,30 +79,74 @@ def convert_to_json():
     dvalid = list(open(fvalid, 'r', encoding='utf-8').read().strip().split('\n'))
     valid = list({'text': x[0], 'label': x[1].split(',')} for x in list(v.split('\t') for v in dvalid))
 
-    json.dump(train, open('data/filtered/processed/proc_train.json', 'w', encoding='utf-8'), ensure_ascii=False)
-    json.dump(valid, open('data/filtered/processed/proc_valid.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(train, open('data/filtered/processed_1021/proc_train.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(valid, open('data/filtered/processed_1021/proc_valid.json', 'w', encoding='utf-8'), ensure_ascii=False)
 
 
-def generate_label_vocab():
-    ftrain = 'data/filtered/processed/proc_train.json'
-    fvalid = 'data/filtered/processed/proc_valid.json'
+def generate_label_vocab(valid=True):
+    fpath = 'data/filtered/processed_1021/part3/'
+    ftrain = os.path.join(fpath, 'proc_train.json')
+    if valid: fvalid = os.path.join(fpath, 'proc_valid.json')
 
     dtrain = json.load(open(ftrain, 'r', encoding='utf-8'))
-    dvalid = json.load(open(fvalid, 'r', encoding='utf-8'))
+    if valid: dvalid = json.load(open(fvalid, 'r', encoding='utf-8'))
 
     label_set = set()
-    for ev in [dtrain, dvalid]:
+    iterlist = [dtrain]
+    if valid: iterlist.append(dvalid)
+    for ev in iterlist:
         for e in ev:
             for l in e['label']:
                 label_set.add(l)
     label_list = sorted(list(label_set))
     label_idx = {x: i for i, x in enumerate(label_list)}
 
-    json.dump(label_list, open('data/filtered/processed/label_list.json', 'w', encoding='utf-8'), ensure_ascii=False)
-    json.dump(label_idx, open('data/filtered/processed/label_idx.json', 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(label_list, open(os.path.join(fpath, 'label_list.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+    json.dump(label_idx, open(os.path.join(fpath, 'label_idx.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+
+
+def generate_part():
+    fpath = 'data/filtered/processed_1021/'
+    neg_ratio = 0.3
+    for part in [1, 2, 3]:
+        part_labels = json.load(open(os.path.join(fpath, f'divide_part{part}.json'), 'r', encoding='utf-8'))
+        ftrain = os.path.join(fpath, 'proc_train.json')
+        dtrain = json.load(open(ftrain, 'r', encoding='utf-8'))
+
+        valid_train, invalid_train = [], []
+        for e in dtrain:
+            found = False
+            for e_label in e['label']:
+                if e_label in part_labels:
+                    valid_train.append(e)
+                    found = True
+                    break
+            if not found:
+                invalid_train.append(e)
+        valid_size = len(valid_train)
+        neg_sample_cnt = int(valid_size * neg_ratio)
+        neg_samples = random.choices(invalid_train, k=neg_sample_cnt)
+
+        results = []
+        for it in [valid_train, neg_samples]:
+            for e in it:
+                new_labels = []
+                for elem in e['label']:
+                    if elem not in part_labels: new_labels.append(elem)
+                results.append({
+                    'text': e['text'],
+                    'label': new_labels
+                })
+        json.dump(results, open(os.path.join(fpath, f'part{part}', 'proc_train.json'), 'w', encoding='utf-8'), ensure_ascii=False)
+
+
+
+
+
 
 if __name__ == '__main__':
     # convert_to_jsonl()
     # train_val_split()
     # convert_to_json()
-    generate_label_vocab()
+    generate_label_vocab(False)
+    # generate_part()

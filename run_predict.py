@@ -123,7 +123,6 @@ def predict(config):
     logger.info(f'{config["model"]}模型加载完成')
 
     # dataset = RM_Dataset(data_type='a', tokenizer=model.tokenizer)
-    # loader = DataLoader(dataset, batch_size=config['eval_batch_size'])
     trainer = Trainer(callbacks=get_callbacks(config), gpus=1)
 
     model.model.eval()
