@@ -238,8 +238,6 @@ class BertMLC_FineTuner(pl.LightningModule):
         return preds
 
     def predict_dataloader(self):
-        if self.hparams['disable_validation']:
-            return None
         train_dataset = RM_Dataset('valid', self.tokenizer)
         dataloader = DataLoader(train_dataset, batch_size=self.hparams['eval_batch_size'], shuffle=False,
                                 collate_fn=RM_collate_fn)

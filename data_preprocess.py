@@ -139,6 +139,26 @@ def generate_part():
                 })
         json.dump(results, open(os.path.join(fpath, f'part{part}', 'proc_train.json'), 'w', encoding='utf-8'), ensure_ascii=False)
 
+def generate_validation():
+    fpath = 'data/filtered/processed_1021/'
+    neg_ratio = 0.3
+    for part in [1, 2, 3]:
+        part_labels = json.load(open(os.path.join(fpath, f'divide_part{part}.json'), 'r', encoding='utf-8'))
+        fvalid = os.path.join(fpath, 'proc_valid.json')
+        dvalid = json.load(open(fvalid, 'r', encoding='utf-8'))
+
+        new_valid = []
+        for e in dvalid:
+            new_labels = []
+            for elabel in e['label']:
+                if elabel in part_labels: new_labels.append(elabel)
+            if new_labels:
+                new_valid.append({
+                    'text': e['text'],
+                    'label': new_labels
+                })
+        json.dump(new_valid, open(os.path.join(fpath, f'part{part}', 'proc_valid.json'), 'w', encoding='utf-8'),
+              ensure_ascii=False)
 
 
 
@@ -148,5 +168,6 @@ if __name__ == '__main__':
     # convert_to_jsonl()
     # train_val_split()
     # convert_to_json()
-    generate_label_vocab(False)
+    # generate_label_vocab(False)
+    generate_validation()
     # generate_part()

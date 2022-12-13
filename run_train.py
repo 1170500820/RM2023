@@ -53,7 +53,6 @@ def handle_cli():
     parser.add_argument('--model_name', type=str, default=plm_model_conf['model_name'])
     parser.add_argument('--max_length', type=int, default=plm_model_conf['max_seq_length'])
     parser.add_argument('--q', type=float, default=1)
-    parser.add_argument('--disable_validation', action='store_true')
 
     # 在2个batch上进行过拟合实验
     parser.add_argument('--overfit', action='store_true', help='在2个batch上进行过拟合实验。验证代码正确性')
@@ -136,7 +135,6 @@ def train(config):
 
         num_labels=len(RM_labels),
         resample_q=config['q'],
-        disable_validation=config['disable_validation']
     )
 
     ru_logger.info(f'正在加载模型{config["model_name"]}')
