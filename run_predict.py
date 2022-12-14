@@ -36,7 +36,7 @@ def handle_cli():
     parser.add_argument('--ckp_file', type=str)
     parser.add_argument('--bsz', type=int, default=16)
     parser.add_argument('--name', type=str, default='default')
-    parser.add_argument('--model_name', type=str, default='bert-base-chinese')
+    parser.add_argument('--model_name', type=str, default='/mnt/huggingface_models/bert-base-chinese-rm')
 
     args = vars(parser.parse_args())
 
