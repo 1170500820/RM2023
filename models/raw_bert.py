@@ -187,8 +187,8 @@ class BertMLC_FineTuner(pl.LightningModule):
             attention_mask=inp['attention_mask']
         )
 
-        output = torch.sigmoid(output)
-        pred = torch.where(output > self.hparams['threshold'], 1, 0)  # (bsz, num_labels)
+        # output = torch.sigmoid(output)
+        pred = torch.where(output > 0, 1, 0)  # (bsz, num_labels)
         gt = tgt['label']
         return {
             'pred': pred,
@@ -228,7 +228,7 @@ class BertMLC_FineTuner(pl.LightningModule):
         )
         preds = []
         for e, t, l in zip(output, texts, labels):
-            pred = (torch.where(torch.sigmoid(e) > self.hparams['threshold']))[0].tolist()
+            pred = (torch.where(torch.sigmoid(e) > 0))[0].tolist()
             real_labels = []
             for el in pred:
                 real_labels.append(RM_labels[el])
